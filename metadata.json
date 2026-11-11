@@ -1,0 +1,7 @@
+{
+  "name": "Portfolio & Knowledge Graph",
+  "description": "GitHub Pages 배포 가능한 단일 index.html 개인 포트폴리오 및 Neo4j 지식그래프 탐색 웹사이트",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+

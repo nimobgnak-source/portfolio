@@ -1,0 +1,2187 @@
+<!doctype html>
+<html lang="ko" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>개인 포트폴리오 | Portfolio & Knowledge Graph</title>
+  
+  <!-- SEO & LinkedIn Open Graph 메타 태그 (LinkedIn 링크 공유 시 미리보기 카드) -->
+  <meta name="description" content="데이터 엔지니어링, 웹 개발 및 지식그래프(Knowledge Graph) 포트폴리오 웹사이트입니다." />
+  <meta property="og:title" content="개인 포트폴리오 | Portfolio & Knowledge Graph" />
+  <meta property="og:description" content="데이터 기반 프로젝트와 Neo4j 인터랙티브 지식그래프를 탐색할 수 있는 개인 포트폴리오입니다." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://yourusername.github.io/portfolio/" />
+  <!-- og:image: 1200x630 해상도의 대표 이미지 URL로 교체하세요 -->
+  <meta property="og:image" content="https://placehold.co/1200x630/18181b/ffffff?text=Portfolio+Preview" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="개인 포트폴리오 | Portfolio & Knowledge Graph" />
+  <meta name="twitter:description" content="데이터 기반 프로젝트와 Neo4j 인터랙티브 지식그래프를 탐색할 수 있는 개인 포트폴리오입니다." />
+  <meta name="twitter:image" content="https://placehold.co/1200x630/18181b/ffffff?text=Portfolio+Preview" />
+
+  <!-- 웹폰트: 가독성이 뛰어난 Pretendard 한글 폰트 CDN -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Pretendard', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'Roboto', 'sans-serif'],
+            mono: ['JetBrains Mono', 'ui-monospace', 'monospace']
+          },
+          colors: {
+            brand: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+              accent: '#3b82f6',
+              accentDark: '#2563eb'
+            }
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Vis-network CDN (Neo4j 지식그래프 시각화 라이브러리) -->
+  <script src="https://unpkg.com/vis-network@9.1.9/standalone/umd/vis-network.min.js"></script>
+
+  <style>
+    /* 기본 타이포그래피 & 부드러운 스크롤 */
+    body {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    /* 사용자 정의 스크롤바 */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.05);
+    }
+    .dark ::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(156, 163, 175, 0.5);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(107, 114, 128, 0.8);
+    }
+
+    /* 그래프 컨테이너 배경 그리드 */
+    .graph-grid-bg {
+      background-size: 24px 24px;
+      background-image: radial-gradient(circle, rgba(148, 163, 184, 0.25) 1px, transparent 1px);
+    }
+    .dark .graph-grid-bg {
+      background-image: radial-gradient(circle, rgba(148, 163, 184, 0.15) 1px, transparent 1px);
+    }
+
+    /* 탭 인디케이터 부드러운 전환 */
+    .nav-transition {
+      transition: color 0.2s ease, border-color 0.2s ease;
+    }
+  </style>
+</head>
+<body class="bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100 min-h-screen flex flex-col selection:bg-blue-600 selection:text-white transition-colors duration-200">
+
+  <!-- ==========================================================================
+       [1. 사용자 이력 및 콘텐츠 데이터 영역 (코딩 없이 내용 수정 가능)]
+       아래의 PROFILE, PROJECTS, CONTACTS 데이터를 원하는 내용으로 수정하세요.
+       ========================================================================== -->
+  <script>
+    /*
+     * --------------------------------------------------------------------------
+     * 📌 [수정 안내 가이드]
+     * 1. 사이트의 모든 텍스트, 프로필, 경력, 프로젝트는 아래 객체(PROFILE, PROJECTS 등)에서 수정합니다.
+     * 2. 빈 곳이나 아직 확정되지 않은 항목은 "[추가 예정]"으로 남겨두시면 됩니다.
+     * 3. 프로필 이미지: avatarUrl 에 이미지 파일 경로 (예: "profile.jpg") 또는 웹 URL을 넣으시면 됩니다.
+     *    비워둘 경우(빈 문자열 "") 멋진 영문 이니셜 그래픽 아바타가 자동으로 렌더링됩니다.
+     * --------------------------------------------------------------------------
+     */
+
+    // [기본 프로필 & 소개 정보]
+    const PROFILE = {
+      name: "홍길동 (Gildong Hong)", // 👈 이름
+      roleTitle: "데이터 엔지니어 & 지식그래프 연구원", // 👈 핵심 직무 / 직함
+      headline: "복잡한 데이터 관계를 지식그래프로 연결하고, 통찰력 있는 가치로 전환합니다.", // 👈 한 줄 소개
+      bioParagraphs: [
+        // 👈 핵심 소개 문단 (원하는 만큼 추가 가능)
+        "데이터베이스 설계와 그래프 모델링(Graph Modeling)을 통해 비정형·정형 데이터 간의 숨겨진 연관 관계를 발굴하는 것에 큰 흥미를 가지고 있습니다.",
+        "Neo4j 및 온톨로지 기반의 지식그래프 구축과 대규모 데이터 파이프라인 개발 경험을 바탕으로, 데이터의 맥락(Context)을 이해하고 효율적인 질의 성능을 구현하는 엔지니어링을 지향합니다.",
+        "현재 지속적인 기술 학습과 실무 프로젝트를 통해 직관적이고 확장성 높은 데이터 솔루션을 만들어 가고 있습니다."
+      ],
+      avatarUrl: "", // 👈 프로필 사진 경로 (예: "my_photo.jpg" 또는 "https://..."). 비워두면 자동 이니셜 아바타 사용
+      statusTag: "구직 중 / 프로젝트 협업 가능", // 👈 현재 상태
+      location: "대한민국 서울", // 👈 위치
+      
+      // [보유 역량 & 기술 스택]
+      // 카테고리별로 자유롭게 추가/수정하세요.
+      skills: [
+        {
+          category: "그래프 DB & 데이터 엔지니어링",
+          items: ["Neo4j", "Cypher Query", "Graph Modeling", "PostgreSQL", "ETL Pipeline", "Python"]
+        },
+        {
+          category: "웹 개발 & 시각화",
+          items: ["JavaScript (ES6+)", "HTML5/CSS3", "Tailwind CSS", "Vis-Network", "RESTful API", "React"]
+        },
+        {
+          category: "도구 및 인프라",
+          items: ["Git / GitHub", "Docker", "Linux", "VS Code", "Jupyter Notebook", "추가 예정"]
+        }
+      ],
+
+      // [경력 및 활동 사항]
+      // 최신순으로 정렬하여 작성하세요.
+      experience: [
+        {
+          period: "2024.03 - 현재",
+          title: "데이터 엔지니어링 & 그래프 분석 프로젝트",
+          organization: "개인 연구 및 팀 프로젝트",
+          description: "Neo4j를 활용한 지식그래프 데이터 구축, Cypher 쿼리 최적화 및 인터랙티브 웹 그래프 시각화 인터페이스 개발을 주도하였습니다.",
+          highlights: [
+            "수만 건의 개체(Entity)와 관계(Relation) 데이터 전처리 및 그래프 적재 자동화",
+            "복잡한 네트워크 탐색을 위한 시각화 툴 프로토타이핑 및 성능 개선",
+            "도메인 지식을 반영한 온톨로지 스키마 설계"
+          ]
+        },
+        {
+          period: "2023.01 - 2023.12",
+          title: "소프트웨어 및 데이터 분석 활동",
+          organization: "대학 연구실 / 데이터 스터디",
+          description: "대용량 CSV/JSON 데이터 정제, 관계형 데이터베이스 모델링 및 알고리즘 분석 스터디를 수행하였습니다.",
+          highlights: [
+            "데이터 전처리 및 EDA(탐색적 데이터 분석) 파이프라인 작성",
+            "팀원 간 기술 지식 공유 및 오픈소스 협업"
+          ]
+        },
+        {
+          period: "추가 예정",
+          title: "[새로운 경력을 여기에 추가하세요]",
+          organization: "[소속 기관 / 회사명]",
+          description: "담당 업무 및 주요 역할에 대한 상세 설명을 여기에 작성하세요.",
+          highlights: [
+            "성과 1 (수치나 결과 중심)",
+            "성과 2 (활용한 기술 및 기여도)"
+          ]
+        }
+      ],
+
+      // [학력 사항]
+      education: [
+        {
+          period: "2020.03 - 2024.02",
+          degree: "컴퓨터공학 / 데이터사이언스 학사",
+          institution: "대학교 (추가 예정)",
+          details: "자료구조, 알고리즘, 데이터베이스 시스템, 인공지능 개론 이수"
+        }
+      ]
+    };
+
+    // [2. 프로젝트 목록 데이터]
+    // 새 프로젝트를 추가할 때는 아래 배열에 객체를 복사해서 추가하면 카드가 자동 생성됩니다!
+    const PROJECTS = [
+      {
+        id: "proj-1",
+        title: "Neo4j 지식그래프 대시보드 & 탐색 플랫폼",
+        category: "데이터 / 그래프", // 카테고리 (필터링에 사용)
+        period: "2024.08 - 2024.10 (3개월)",
+        role: "데이터 모델링, 시각화 웹 애플리케이션 개발 (기여도 100%)",
+        thumbnail: "", // 이미지 URL이 없을 경우 감각적인 테마 그래픽이 자동 표시됩니다.
+        summary: "Neo4j 그래프 데이터베이스의 노드와 관계를 웹에서 실시간으로 탐색하고 분석할 수 있는 단일 페이지 인터랙티브 플랫폼입니다.",
+        background: "기존의 정형 테이블 형태 데이터로는 엔티티 간의 복잡하고 다차원적인 관계를 직관적으로 파악하기 어려웠습니다. 이에 데이터 간 연결성을 시각적으로 파악하고 다각도로 탐색할 수 있는 그래프 시각화 환경을 구축하고자 기획하였습니다.",
+        process: [
+          "1단계: 도메인 엔티티 분석 및 노드-릴레이션 스키마 설계",
+          "2단계: Python 기반 데이터 전처리 및 Neo4j 적재 파이프라인 개발",
+          "3단계: 브라우저 친화적 경량 시각화 엔진(Vis-network 및 Canvas 2D) 연동",
+          "4단계: 검색, 유형별 필터링, 상세 정보 사이드 패널 등 사용자 UX 최적화"
+        ],
+        results: [
+          "복잡한 네트워크 구조를 한눈에 파악 가능한 인터랙티브 그래프 뷰 구현",
+          "노드 검색 시 0.1초 내 해당 위치 줌인 및 하이라이트 제공",
+          "단일 index.html 파일만으로 배포 가능한 경량화 달성"
+        ],
+        technologies: ["Neo4j", "Cypher", "JavaScript", "Vis-Network", "Tailwind CSS"],
+        links: [
+          { label: "데이터 탐색 바로가기", url: "#explore" },
+          { label: "GitHub 저장소", url: "https://github.com/yourusername/project-repo" }
+        ]
+      },
+      {
+        id: "proj-2",
+        title: "대규모 데이터 수집 및 정제 파이프라인 구축",
+        category: "데이터 엔지니어링",
+        period: "2024.04 - 2024.06 (2개월)",
+        role: "ETL 파이프라인 설계 및 데이터 품질 검증 (기여도 80%)",
+        thumbnail: "",
+        summary: "이기종 소스에서 발생하는 비정형 데이터를 수집하여 표준 스키마로 변환하고 정합성을 검증하는 자동화 파이프라인을 구축했습니다.",
+        background: "분산된 여러 데이터 소스 간의 데이터 포맷 불일치와 결측치 문제를 해결하고, 후속 분석 및 그래프 DB 적재에 필요한 신뢰도 높은 데이터를 공급하기 위해 시작되었습니다.",
+        process: [
+          "데이터 소스별 API 및 CSV 크롤링 자동화 모듈 작성",
+          "결측치 처리, 중복 개체 식별(Entity Resolution) 규칙 정의",
+          "이상치 모니터링 및 정합성 검증 체크리스트 작성"
+        ],
+        results: [
+          "데이터 정제 소요 시간 기존 대비 60% 단축",
+          "결측 및 불량 데이터 발생률 1% 미만으로 억제"
+        ],
+        technologies: ["Python", "Pandas", "PostgreSQL", "Docker", "Git"],
+        links: [
+          { label: "GitHub 저장소 (추가 예정)", url: "#" }
+        ]
+      },
+      {
+        id: "proj-3",
+        title: "반응형 포트폴리오 웹사이트 (GitHub Pages)",
+        category: "웹 개발",
+        period: "2024.11 (1주)",
+        role: "기획, UI/UX 디자인, 프론트엔드 개발 (기여도 100%)",
+        thumbnail: "",
+        summary: "빌드 도구 없이 브라우저에서 바로 동작하며, 누구나 손쉽게 데이터만 교체하여 이력을 관리할 수 있는 모던 포트폴리오 사이트입니다.",
+        background: "LinkedIn 등 프로필에 연동할 수 있는 빠르고 간결한 개인 브랜딩 사이트의 필요성을 느껴, 설치 과정 없이 index.html 파일 하나로 배포 가능한 구조를 고안했습니다.",
+        process: [
+          "사용자 중심의 단일 파일 SPA 구조 설계 (해시 라우팅 적용)",
+          "상단 데이터 객체와 렌더링 로직의 완전한 분리로 유지보수성 극대화",
+          "다크/라이트 모드, 반응형 레이아웃, 키보드 접근성 구현"
+        ],
+        results: [
+          "GitHub Pages 정적 호스팅 100% 호환",
+          "Lighthouse 웹 접근성 및 성능 우수 등급 달성"
+        ],
+        technologies: ["HTML5", "CSS3", "JavaScript", "Tailwind CSS", "Pretendard"],
+        links: [
+          { label: "데모 보기", url: "#home" }
+        ]
+      },
+      {
+        id: "proj-4",
+        title: "[새 프로젝트를 여기에 추가하세요]",
+        category: "기타",
+        period: "202X.XX - 202X.XX",
+        role: "[역할 및 담당 분야 입력]",
+        thumbnail: "",
+        summary: "[프로젝트에 대한 핵심 요약 설명을 1~2줄로 입력하세요]",
+        background: "[프로젝트를 시작하게 된 배경과 해결하고자 했던 과제를 적어주세요]",
+        process: [
+          "1단계: [진행 과정 1]",
+          "2단계: [진행 과정 2]",
+          "3단계: [진행 과정 3]"
+        ],
+        results: [
+          "[성과 및 달성한 주요 지표 1]",
+          "[성과 및 달성한 주요 지표 2]"
+        ],
+        technologies: ["기술1", "기술2", "도구1"],
+        links: [
+          { label: "링크 추가 예정", url: "#" }
+        ]
+      }
+    ];
+
+    // [3. 연락처 및 소셜 링크]
+    // 본인의 계정 주소로 수정하세요. 필요 없는 항목은 남겨두거나 주석 처리할 수 있습니다.
+    const CONTACTS = [
+      {
+        type: "email",
+        label: "이메일",
+        value: "user@example.com", // 👈 본인 이메일로 교체하세요
+        href: "mailto:user@example.com",
+        copyable: true
+      },
+      {
+        type: "linkedin",
+        label: "LinkedIn 프로필",
+        value: "linkedin.com/in/yourprofile", // 👈 본인 LinkedIn 링크
+        href: "https://www.linkedin.com/in/yourprofile",
+        copyable: false
+      },
+      {
+        type: "github",
+        label: "GitHub 저장소",
+        value: "github.com/yourusername", // 👈 본인 GitHub 링크
+        href: "https://github.com/yourusername",
+        copyable: false
+      },
+      {
+        type: "location",
+        label: "활동 지역",
+        value: "대한민국 서울 (원격 근무 가능)",
+        href: "",
+        copyable: false
+      }
+    ];
+  </script>
+
+  <!-- ==========================================================================
+       [2. 내장 Neo4j CSV 데이터]
+       Neo4j에서 내보낸 관계형 데이터를 아래에 그대로 붙여넣을 수 있습니다.
+       * 표준 컬럼 구조:
+         source_id: 시작 노드 ID
+         source_name: 시작 노드 이름
+         source_type: 시작 노드 레이블 (예: Project, Technology, Skill, Person 등)
+         target_id: 도착 노드 ID
+         target_name: 도착 노드 이름
+         target_type: 도착 노드 레이블
+         relation: 관계 유형 (예: BUILT_WITH, CONTAINS, APPLIES 등)
+         relation_desc: 관계에 대한 한글 설명 문구
+         weight: 선 굵기/가중치 (1 ~ 5)
+       ========================================================================== -->
+  <script type="text/csv" id="neo4j-csv">
+source_id,source_name,source_type,target_id,target_name,target_type,relation,relation_desc,weight
+N_PORTFOLIO,포트폴리오,Portfolio,N_KG_PLATFORM,지식그래프 탐색기,Project,CONTAINS,포트폴리오의 대표 프로젝트,3
+N_PORTFOLIO,포트폴리오,Portfolio,N_ETL_PIPELINE,데이터 파이프라인,Project,CONTAINS,데이터 엔지니어링 프로젝트,2
+N_PORTFOLIO,포트폴리오,Portfolio,N_WEB_PORTFOLIO,반응형 웹 사이트,Project,CONTAINS,단일 파일 프론트엔드 프로젝트,2
+N_KG_PLATFORM,지식그래프 탐색기,Project,N_NEO4J,Neo4j,Technology,BUILT_WITH,그래프 DB 엔진으로 데이터 적재,3
+N_KG_PLATFORM,지식그래프 탐색기,Project,N_CYPHER,Cypher,Technology,QUERIED_BY,그래프 패턴 탐색 질의어 활용,3
+N_KG_PLATFORM,지식그래프 탐색기,Project,N_VIS_NETWORK,Vis-Network,Technology,VISUALIZED_BY,인터랙티브 웹 캔버스 시각화,3
+N_KG_PLATFORM,지식그래프 탐색기,Project,N_GRAPH_MODELING,그래프 모델링,Domain,BELONGS_TO,엔티티와 릴레이션 스키마 설계,2
+N_ETL_PIPELINE,데이터 파이프라인,Project,N_PYTHON,Python,Technology,DEVELOPED_IN,데이터 정제 및 자동화 스크립트,3
+N_ETL_PIPELINE,데이터 파이프라인,Project,N_POSTGRES,PostgreSQL,Technology,STORES_IN,정형 기준 데이터 저장소,2
+N_ETL_PIPELINE,데이터 파이프라인,Project,N_DOCKER,Docker,Technology,CONTAINERIZED_BY,컨테이너 기반 환경 격리,2
+N_WEB_PORTFOLIO,반응형 웹 사이트,Project,N_JAVASCRIPT,JavaScript,Technology,IMPLEMENTED_IN,바닐라 JS 기반 반응형 SPA 구현,2
+N_WEB_PORTFOLIO,반응형 웹 사이트,Project,N_TAILWIND,Tailwind CSS,Technology,STYLED_WITH,모던 유틸리티 CSS 스타일링,2
+N_NEO4J,Neo4j,Technology,N_GRAPH_ALGO,그래프 알고리즘,Domain,LEVERAGES,최단경로 및 군집도 분석 알고리즘,2
+N_NEO4J,Neo4j,Technology,N_CYPHER,Cypher,Technology,SUPPORTS,선언적 그래프 질의 지원,2
+N_PYTHON,Python,Technology,N_ETL_SKILL,데이터 전처리 역량,Skill,DEMONSTRATES,비정형 데이터 정제 및 변환 능력,2
+N_GRAPH_MODELING,그래프 모델링,Domain,N_ONTOLOGY_SKILL,온톨로지 설계 역량,Skill,DEMONSTRATES,도메인 지식 체계화 역량 증명,3
+N_PORTFOLIO,포트폴리오,Portfolio,N_GILDONG,홍길동,Person,CREATED_BY,포트폴리오 제작자,3
+N_GILDONG,홍길동,Person,N_ONTOLOGY_SKILL,온톨로지 설계 역량,Skill,POSSESSES,핵심 직무 역량 보유,2
+N_GILDONG,홍길동,Person,N_ETL_SKILL,데이터 전처리 역량,Skill,POSSESSES,데이터 엔지니어링 실무 역량,2
+N_GILDONG,홍길동,Person,N_KG_PLATFORM,지식그래프 탐색기,Project,DIRECTED,기획 및 아키텍처 설계 총괄,3
+  </script>
+
+  <!-- ==========================================================================
+       [3. 공통 헤더 (상단 고정 네비게이션)]
+       - 좌측: 로고/이름 (클릭 시 #home 이동)
+       - 우측: 자기소개 / 프로젝트 / 데이터 탐색 링크 + 테마 토글 버튼
+       - 모바일: 햄버거 메뉴 및 반응형 네비게이션
+       ========================================================================== -->
+  <header class="sticky top-0 z-40 w-full backdrop-blur-md bg-white/90 dark:bg-zinc-950/90 border-b border-zinc-200 dark:border-zinc-800 transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+      
+      <!-- 좌측 로고 / 홈 버튼 -->
+      <a href="#home" class="flex items-center gap-2 group focus:outline-none" aria-label="홈으로 이동">
+        <div class="w-9 h-9 rounded-lg bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 flex items-center justify-center font-bold text-sm shadow-sm group-hover:scale-105 transition-transform">
+          HG
+        </div>
+        <div class="flex flex-col">
+          <span id="header-brand-name" class="font-bold text-base tracking-tight text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+            홍길동
+          </span>
+          <span class="text-[11px] text-zinc-600 dark:text-zinc-300 font-medium">Portfolio & KG</span>
+        </div>
+      </a>
+
+      <!-- 데스크톱 네비게이션 -->
+      <nav class="hidden md:flex items-center gap-1 text-sm font-medium">
+        <a href="#home" id="nav-home" class="px-3.5 py-2 rounded-lg text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-900 nav-transition">
+          자기소개
+        </a>
+        <a href="#projects" id="nav-projects" class="px-3.5 py-2 rounded-lg text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-900 nav-transition">
+          프로젝트
+        </a>
+        <a href="#explore" id="nav-explore" class="px-3.5 py-2 rounded-lg text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-900 nav-transition flex items-center gap-1.5">
+          <span>데이터 탐색</span>
+          <span class="inline-block w-2 h-2 rounded-full bg-blue-500"></span>
+        </a>
+      </nav>
+
+      <!-- 우측 컨트롤 (다크모드 토글 + 문의 버튼 + 모바일 메뉴 버튼) -->
+      <div class="flex items-center gap-2">
+        <!-- 테마 전환 버튼 -->
+        <button id="theme-toggle" class="p-2 rounded-lg text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors" aria-label="테마 전환" title="다크/라이트 모드 전환">
+          <!-- 해 아이콘 (다크모드일 때 보임) -->
+          <svg id="theme-icon-sun" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+          <!-- 달 아이콘 (라이트모드일 때 보임) -->
+          <svg id="theme-icon-moon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+          </svg>
+        </button>
+
+        <!-- 연락하기 빠른 버튼 (데스크톱) -->
+        <a href="#contact" class="hidden sm:inline-flex items-center justify-center px-4 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-500 rounded-lg shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+          연락하기
+        </a>
+
+        <!-- 모바일 햄버거 메뉴 토글 버튼 -->
+        <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors" aria-label="메뉴 열기">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path id="hamburger-icon-path" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- 모바일 드롭다운 메뉴 -->
+    <div id="mobile-menu" class="hidden md:hidden border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-4 pt-2 pb-4 space-y-1">
+      <a href="#home" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-900">
+        자기소개
+      </a>
+      <a href="#projects" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-900">
+        프로젝트
+      </a>
+      <a href="#explore" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-900">
+        데이터 탐색 (지식그래프)
+      </a>
+      <div class="pt-2">
+        <a href="#contact" class="mobile-nav-link block text-center w-full px-4 py-2.5 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm">
+          연락하기
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================================================
+       [4. 메인 콘텐츠 컨테이너 (SPA 뷰 전환)]
+       #home: 자기소개 화면
+       #projects: 프로젝트 목록 및 상세 모달
+       #explore: Neo4j 지식그래프 인터랙티브 탐색기 & 표 뷰
+       ========================================================================== -->
+  <main class="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+    
+    <!-- ------------------------------------------------------------------------
+         섹션 1: 자기소개 뷰 (#home)
+         ------------------------------------------------------------------------ -->
+    <section id="view-home" class="space-y-16 animate-fadeIn">
+      
+      <!-- 히어로 영역 (스플릿 레이아웃: 프로필 + 소개글) -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center pt-4 sm:pt-8">
+        
+        <!-- 좌측 소개문 -->
+        <div class="lg:col-span-8 space-y-6">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-900">
+            <span class="w-1.5 h-1.5 rounded-full bg-blue-600 dark:bg-blue-400"></span>
+            <span id="hero-status-tag">구직 중 / 프로젝트 협업 가능</span>
+          </div>
+
+          <div class="space-y-2">
+            <h1 id="hero-name" class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-zinc-900 dark:text-white">
+              홍길동
+            </h1>
+            <p id="hero-role" class="text-lg sm:text-xl font-medium text-blue-600 dark:text-blue-400">
+              데이터 엔지니어 & 지식그래프 연구원
+            </p>
+          </div>
+
+          <p id="hero-headline" class="text-lg sm:text-xl text-zinc-700 dark:text-zinc-300 leading-relaxed font-normal">
+            복잡한 데이터 관계를 지식그래프로 연결하고, 통찰력 있는 가치로 전환합니다.
+          </p>
+
+          <!-- 상세 소개 문단 -->
+          <div id="hero-bio-container" class="space-y-3 text-sm sm:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            <!-- 자바스크립트에서 렌더링 -->
+          </div>
+
+          <!-- 주요 버튼 그룹 -->
+          <div class="flex flex-wrap items-center gap-3 pt-2">
+            <a href="#projects" class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-semibold text-white bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-100 rounded-lg shadow-sm transition-all">
+              프로젝트 둘러보기
+              <svg class="w-4 h-4 ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </a>
+            <a href="#explore" class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-semibold text-zinc-800 dark:text-zinc-200 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 rounded-lg transition-all">
+              지식그래프 탐색
+              <svg class="w-4 h-4 ml-1.5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </a>
+            <a href="#contact" class="inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition-colors">
+              연락처 보기
+            </a>
+          </div>
+        </div>
+
+        <!-- 우측 프로필 사진 영역 (사진이 없을 시 세련된 이니셜 아바타 플레이스홀더) -->
+        <div class="lg:col-span-4 flex justify-center lg:justify-end">
+          <div class="relative w-56 h-56 sm:w-64 sm:h-64 rounded-2xl p-2 bg-gradient-to-tr from-blue-500/20 via-zinc-200 to-indigo-500/20 dark:from-blue-500/10 dark:via-zinc-800 dark:to-indigo-500/10 shadow-lg border border-zinc-200 dark:border-zinc-800">
+            <div id="profile-image-container" class="w-full h-full rounded-xl overflow-hidden bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center relative">
+              <!-- 이미지가 있으면 img 태그, 없으면 SVG 이니셜 배지가 들어갑니다 -->
+            </div>
+            <!-- 장식용 미니 뱃지 -->
+            <div class="absolute -bottom-2 -right-2 px-3 py-1 bg-white dark:bg-zinc-900 rounded-lg shadow border border-zinc-200 dark:border-zinc-700 text-[11px] font-semibold text-zinc-700 dark:text-zinc-300 flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+              <span id="profile-location">대한민국 서울</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 구분선 -->
+      <hr class="border-zinc-200 dark:border-zinc-800" />
+
+      <!-- 핵심 역량 & 기술 스택 그리드 -->
+      <div class="space-y-6">
+        <div>
+          <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
+            핵심 기술 및 역량
+          </h2>
+          <p class="text-sm text-zinc-600 dark:text-zinc-300 mt-1">
+            실무와 프로젝트를 통해 축적한 데이터 및 소프트웨어 엔지니어링 기술입니다.
+          </p>
+        </div>
+
+        <div id="skills-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- 자바스크립트로 렌더링 -->
+        </div>
+      </div>
+
+      <!-- 구분선 -->
+      <hr class="border-zinc-200 dark:border-zinc-800" />
+
+      <!-- 경력 및 활동 타임라인 -->
+      <div class="space-y-8">
+        <div>
+          <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
+            경력 및 주요 활동
+          </h2>
+          <p class="text-sm text-zinc-600 dark:text-zinc-300 mt-1">
+            참여한 프로젝트, 연구 및 주요 역할의 기록입니다.
+          </p>
+        </div>
+
+        <div id="experience-list" class="space-y-6">
+          <!-- 자바스크립트로 렌더링 -->
+        </div>
+      </div>
+
+      <!-- 학력 섹션 -->
+      <div class="space-y-6">
+        <div>
+          <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
+            학력
+          </h2>
+        </div>
+        <div id="education-list" class="grid grid-cols-1 gap-4">
+          <!-- 자바스크립트로 렌더링 -->
+        </div>
+      </div>
+
+      <!-- 구분선 -->
+      <hr class="border-zinc-200 dark:border-zinc-800" />
+
+      <!-- 연락 방법 섹션 (#contact) -->
+      <div id="contact" class="space-y-6 pt-4">
+        <div>
+          <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
+            연락 방법
+          </h2>
+          <p class="text-sm text-zinc-600 dark:text-zinc-300 mt-1">
+            새로운 기회, 프로젝트 협업 제안 및 질의사항은 언제든 편하게 연락해 주세요.
+          </p>
+        </div>
+
+        <div id="contacts-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- 자바스크립트로 렌더링 -->
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ------------------------------------------------------------------------
+         섹션 2: 프로젝트 뷰 (#projects)
+         ------------------------------------------------------------------------ -->
+    <section id="view-projects" class="space-y-8 hidden animate-fadeIn">
+      
+      <!-- 프로젝트 헤더 & 카테고리 필터 -->
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-zinc-200 dark:border-zinc-800 pb-6">
+        <div>
+          <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-100">
+            프로젝트
+          </h1>
+          <p class="text-sm text-zinc-600 dark:text-zinc-300 mt-1">
+            데이터 분석, 지식그래프 구축 및 웹 솔루션 기획·개발 결과물입니다.
+          </p>
+        </div>
+
+        <!-- 카테고리 필터 탭 -->
+        <div id="project-filters" class="flex flex-wrap items-center gap-1.5 p-1 bg-zinc-100 dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 text-xs font-medium">
+          <!-- 자바스크립트로 필터 버튼 자동 생성 -->
+        </div>
+      </div>
+
+      <!-- 프로젝트 카드 그리드 -->
+      <div id="project-cards-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- 자바스크립트로 렌더링 -->
+      </div>
+
+      <!-- 프로젝트 하단 안내 -->
+      <div class="p-6 rounded-xl bg-blue-50/50 dark:bg-zinc-900/50 border border-blue-100 dark:border-zinc-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <h3 class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+            새 프로젝트를 추가하고 싶으신가요?
+          </h3>
+          <p class="text-xs text-zinc-600 dark:text-zinc-300 mt-0.5">
+            이 파일(index.html) 상단의 <code class="font-mono bg-zinc-200 dark:bg-zinc-800 px-1 py-0.5 rounded text-[11px]">PROJECTS</code> 배열에 객체를 추가하면 카드가 자동 생성됩니다.
+          </p>
+        </div>
+        <a href="#explore" class="shrink-0 px-4 py-2 text-xs font-semibold text-blue-600 dark:text-blue-400 bg-white dark:bg-zinc-800 hover:bg-blue-50 dark:hover:bg-zinc-700 rounded-lg border border-blue-200 dark:border-zinc-700 shadow-sm transition-all">
+          프로젝트 지식그래프 탐색하기 &rarr;
+        </a>
+      </div>
+
+    </section>
+
+    <!-- ------------------------------------------------------------------------
+         섹션 3: 데이터 탐색 뷰 (#explore) - Neo4j 지식그래프 인터랙티브 탐색기
+         ------------------------------------------------------------------------ -->
+    <section id="view-explore" class="space-y-6 hidden animate-fadeIn">
+      
+      <!-- 탐색기 상단 설명 -->
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-zinc-200 dark:border-zinc-800 pb-5">
+        <div>
+          <div class="inline-flex items-center gap-2 text-xs font-medium text-blue-600 dark:text-blue-400 mb-1">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+            </svg>
+            <span>Neo4j Knowledge Graph Visualizer</span>
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-100">
+            데이터 탐색
+          </h1>
+          <p class="text-sm text-zinc-600 dark:text-zinc-300 mt-1">
+            Neo4j 데이터베이스에서 추출된 노드(Entity)와 관계(Relationship)를 탐색할 수 있는 인터랙티브 지식그래프입니다.
+          </p>
+        </div>
+
+        <!-- 뷰 전환 탭 (그래프 뷰 vs 표 뷰) -->
+        <div class="flex items-center gap-1 p-1 bg-zinc-100 dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800">
+          <button id="view-toggle-graph" class="px-4 py-2 text-xs font-semibold rounded-md bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white shadow-sm transition-all flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            <span>인터랙티브 그래프</span>
+          </button>
+          <button id="view-toggle-table" class="px-4 py-2 text-xs font-semibold rounded-md text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+            <span>데이터 표 (Table)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 컨트롤 툴바: 검색 + 노드 유형 필터 + 관계 유형 필터 + 줌/초기화 버튼 -->
+      <div class="p-4 bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 shadow-sm space-y-3">
+        <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+          
+          <!-- 실시간 노드 검색창 -->
+          <div class="relative flex-1 max-w-md">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-zinc-400">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </span>
+            <input 
+              type="text" 
+              id="graph-search-input" 
+              placeholder="노드 이름 검색 (예: Neo4j, 포트폴리오, Python)..." 
+              class="w-full pl-9 pr-8 py-2 text-xs rounded-lg bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+            />
+            <button id="graph-search-clear" class="absolute inset-y-0 right-0 pr-2.5 flex items-center text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 hidden" title="검색어 지우기">
+              ✕
+            </button>
+          </div>
+
+          <!-- 유형별 필터 셀렉트 -->
+          <div class="flex flex-wrap items-center gap-2">
+            <!-- 노드 타입 필터 -->
+            <div class="flex items-center gap-1.5 text-xs">
+              <label for="filter-node-type" class="text-zinc-500 dark:text-zinc-400 whitespace-nowrap">개체 유형:</label>
+              <select id="filter-node-type" class="px-2.5 py-1.5 rounded-lg bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-700 text-xs text-zinc-800 dark:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="ALL">전체 노드</option>
+                <!-- 자바스크립트로 옵션 주입 -->
+              </select>
+            </div>
+
+            <!-- 관계 유형 필터 -->
+            <div class="flex items-center gap-1.5 text-xs">
+              <label for="filter-edge-type" class="text-zinc-500 dark:text-zinc-400 whitespace-nowrap">관계 유형:</label>
+              <select id="filter-edge-type" class="px-2.5 py-1.5 rounded-lg bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-700 text-xs text-zinc-800 dark:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="ALL">전체 관계</option>
+                <!-- 자바스크립트로 옵션 주입 -->
+              </select>
+            </div>
+
+            <!-- 그래프 컨트롤 도구 (초기화, 물리엔진 토글, 화면 맞춤) -->
+            <div class="flex items-center gap-1 pl-1 border-l border-zinc-200 dark:border-zinc-800">
+              <button id="btn-graph-fit" class="p-2 rounded-lg text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white transition-colors" title="전체 화면 맞춤 (Fit)">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-5h-4m4 0v4m0 0l-5-5m-7 11l-5 5m0 0h4m-4 0v-4m16 4l-5-5m5 5v-4m0 4h-4" />
+                </svg>
+              </button>
+              <button id="btn-graph-physics" class="p-2 rounded-lg text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white transition-colors" title="물리 시뮬레이션 고정/재개">
+                <svg id="icon-physics-active" class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </button>
+              <button id="btn-graph-reset" class="p-2 rounded-lg text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white transition-colors" title="필터 및 위치 초기화">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+              </button>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- 하단 범례 (Legend) -->
+        <div id="graph-legend-container" class="flex flex-wrap items-center gap-x-4 gap-y-1.5 pt-2 border-t border-zinc-100 dark:border-zinc-800 text-[11px] text-zinc-500 dark:text-zinc-400">
+          <span class="font-semibold text-zinc-700 dark:text-zinc-300">노드 범례:</span>
+          <!-- 자바스크립트로 범례 칩 주입 -->
+        </div>
+      </div>
+
+      <!-- 메인 그래프 뷰 컨테이너 (그래프 + 우측 사이드 패널) -->
+      <div id="graph-view-wrapper" class="relative w-full h-[600px] rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden shadow-sm flex flex-col md:flex-row">
+        
+        <!-- 그래프 렌더링 캔버스 영역 -->
+        <div class="relative flex-1 h-full graph-grid-bg">
+          <div id="vis-network-container" class="w-full h-full"></div>
+          
+          <!-- 안내 워터마크 안내문 (조작 힌트) -->
+          <div class="absolute bottom-3 left-3 pointer-events-none px-3 py-1.5 rounded-lg bg-white/80 dark:bg-zinc-900/80 backdrop-blur-sm border border-zinc-200/60 dark:border-zinc-800/60 text-[11px] text-zinc-500 dark:text-zinc-400 shadow-sm">
+            💡 마우스 휠로 확대/축소, 노드를 드래그하거나 클릭하여 상세 정보를 확인하세요.
+          </div>
+
+          <!-- 상태 뱃지 (노드/엣지 개수) -->
+          <div class="absolute top-3 left-3 pointer-events-none px-3 py-1 rounded-full bg-zinc-900/80 dark:bg-white/90 text-white dark:text-zinc-900 text-xs font-semibold backdrop-blur-sm shadow flex items-center gap-2">
+            <span id="badge-node-count">노드: 0</span>
+            <span>·</span>
+            <span id="badge-edge-count">관계: 0</span>
+          </div>
+        </div>
+
+        <!-- 우측 노드 상세 정보 사이드 패널 -->
+        <div id="graph-detail-panel" class="w-full md:w-80 border-t md:border-t-0 md:border-l border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 p-5 flex flex-col justify-between overflow-y-auto max-h-[300px] md:max-h-full">
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-zinc-600 dark:text-zinc-300">노드 상세 정보</span>
+              <button id="btn-close-detail" class="text-xs text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 hidden">
+                선택 해제 ✕
+              </button>
+            </div>
+
+            <div id="detail-empty-state" class="text-center py-12 text-xs text-zinc-400 dark:text-zinc-500 space-y-2">
+              <svg class="w-8 h-8 mx-auto text-zinc-300 dark:text-zinc-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
+              </svg>
+              <p>그래프의 노드를 클릭하면<br />속성과 연결된 관계가 여기에 표시됩니다.</p>
+            </div>
+
+            <!-- 실제 상세 내용 표시 영역 -->
+            <div id="detail-content" class="space-y-4 hidden text-xs">
+              <div class="space-y-1 pb-3 border-b border-zinc-200 dark:border-zinc-800">
+                <span id="detail-type-badge" class="px-2 py-0.5 rounded text-[10px] font-bold tracking-wide uppercase bg-blue-100 text-blue-700 dark:bg-blue-900/60 dark:text-blue-300">
+                  Node Type
+                </span>
+                <h3 id="detail-node-name" class="text-base font-bold text-zinc-900 dark:text-zinc-100 pt-1">
+                  노드 이름
+                </h3>
+                <p id="detail-node-id" class="text-[11px] font-mono text-zinc-600 dark:text-zinc-300">
+                  ID: N1
+                </p>
+              </div>
+
+              <!-- 연결된 관계 목록 -->
+              <div class="space-y-2">
+                <h4 class="font-semibold text-zinc-700 dark:text-zinc-300 text-[11px] flex items-center justify-between">
+                  <span>연결된 관계 (Edges)</span>
+                  <span id="detail-edge-count" class="font-mono text-blue-600 dark:text-blue-400">0</span>
+                </h4>
+                <div id="detail-connected-list" class="space-y-1.5 max-h-56 overflow-y-auto pr-1">
+                  <!-- 자바스크립트로 주입 -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-4 border-t border-zinc-200 dark:border-zinc-800 text-[11px] text-zinc-600 dark:text-zinc-300 flex items-center justify-between">
+            <span>Cypher 데이터셋</span>
+            <span class="font-mono text-[10px] bg-zinc-200 dark:bg-zinc-800 px-1.5 py-0.5 rounded">Neo4j CSV</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 데이터 표 (Table) 뷰 컨테이너 (토글 시 표시) -->
+      <div id="table-view-wrapper" class="hidden space-y-4">
+        <div class="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400">
+          <span>전체 <strong id="table-row-count" class="text-zinc-900 dark:text-white font-semibold">0</strong>건의 관계 레코드</span>
+          <button id="btn-export-csv" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700 transition-colors flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            <span>CSV 다운로드</span>
+          </button>
+        </div>
+
+        <div class="overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-zinc-50 dark:bg-zinc-950 border-b border-zinc-200 dark:border-zinc-800 text-zinc-500 dark:text-zinc-400 font-semibold uppercase tracking-wider text-[11px]">
+              <tr>
+                <th class="py-3 px-4">시작 노드 (Source)</th>
+                <th class="py-3 px-3">시작 유형</th>
+                <th class="py-3 px-4">관계 (Relation)</th>
+                <th class="py-3 px-4">도착 노드 (Target)</th>
+                <th class="py-3 px-3">도착 유형</th>
+                <th class="py-3 px-4">관계 설명</th>
+                <th class="py-3 px-3 text-right">가중치</th>
+              </tr>
+            </thead>
+            <tbody id="csv-table-body" class="divide-y divide-zinc-200 dark:divide-zinc-800 font-normal text-zinc-800 dark:text-zinc-200">
+              <!-- 자바스크립트로 렌더링 -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ==========================================================================
+       [5. 프로젝트 상세 모달 (Modal Viewer)]
+       카드 클릭 시 열리며 ESC 키 또는 배경 클릭 시 닫힙니다.
+       ========================================================================== -->
+  <div id="project-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-zinc-950/70 backdrop-blur-sm hidden" role="dialog" aria-modal="true">
+    <div id="modal-container" class="relative w-full max-w-2xl max-h-[90vh] bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-zinc-200 dark:border-zinc-800 overflow-hidden flex flex-col transition-all">
+      
+      <!-- 모달 헤더 -->
+      <div class="p-6 border-b border-zinc-200 dark:border-zinc-800 flex items-start justify-between gap-4">
+        <div>
+          <span id="modal-category" class="text-xs font-semibold text-blue-600 dark:text-blue-400">
+            카테고리
+          </span>
+          <h2 id="modal-title" class="text-xl sm:text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100 mt-0.5">
+            프로젝트 제목
+          </h2>
+          <p id="modal-period" class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
+            2024.01 - 2024.06
+          </p>
+        </div>
+        <button id="modal-close-btn" class="p-2 rounded-lg text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors" aria-label="모달 닫기">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- 모달 본문 (스크롤) -->
+      <div class="p-6 overflow-y-auto space-y-6 text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
+        
+        <!-- 역할 및 요약 -->
+        <div class="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-950/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
+          <div class="text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+            담당 역할
+          </div>
+          <p id="modal-role" class="font-medium text-zinc-900 dark:text-zinc-100">
+            역할 설명
+          </p>
+          <p id="modal-summary" class="text-xs text-zinc-600 dark:text-zinc-400 pt-1 border-t border-zinc-200 dark:border-zinc-800">
+            요약
+          </p>
+        </div>
+
+        <!-- 배경 및 문제 정의 -->
+        <div class="space-y-2">
+          <h3 class="text-base font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+            <span class="w-1.5 h-4 bg-blue-600 rounded-full"></span>
+            프로젝트 배경 및 목표
+          </h3>
+          <p id="modal-background" class="text-zinc-600 dark:text-zinc-400">
+            배경 설명
+          </p>
+        </div>
+
+        <!-- 진행 과정 -->
+        <div class="space-y-2">
+          <h3 class="text-base font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+            <span class="w-1.5 h-4 bg-blue-600 rounded-full"></span>
+            수행 과정 및 구현
+          </h3>
+          <ul id="modal-process-list" class="space-y-1.5 list-disc list-inside text-zinc-600 dark:text-zinc-400 text-xs sm:text-sm pl-1">
+            <!-- 자바스크립트로 주입 -->
+          </ul>
+        </div>
+
+        <!-- 성과 및 결과 -->
+        <div class="space-y-2">
+          <h3 class="text-base font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+            <span class="w-1.5 h-4 bg-emerald-500 rounded-full"></span>
+            주요 성과 및 배운 점
+          </h3>
+          <ul id="modal-results-list" class="space-y-1.5 list-disc list-inside text-zinc-600 dark:text-zinc-400 text-xs sm:text-sm pl-1">
+            <!-- 자바스크립트로 주입 -->
+          </ul>
+        </div>
+
+        <!-- 사용 기술 스택 -->
+        <div class="space-y-2">
+          <h3 class="text-base font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+            <span class="w-1.5 h-4 bg-indigo-500 rounded-full"></span>
+            사용 기술 및 도구
+          </h3>
+          <div id="modal-tech-stack" class="flex flex-wrap gap-1.5 pt-1">
+            <!-- 태그 주입 -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 모달 푸터 (외부 링크 & 닫기 버튼) -->
+      <div class="p-4 px-6 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 flex flex-wrap items-center justify-between gap-3">
+        <div id="modal-links" class="flex flex-wrap items-center gap-2">
+          <!-- 링크 버튼 주입 -->
+        </div>
+        <button id="modal-footer-close-btn" class="px-4 py-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 rounded-lg transition-colors">
+          닫기
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 토스트 알림 (클립보드 복사 등 피드백용) -->
+  <div id="toast-message" class="fixed bottom-6 right-6 z-50 px-4 py-2.5 bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 text-xs font-semibold rounded-xl shadow-xl transition-opacity duration-300 opacity-0 pointer-events-none flex items-center gap-2">
+    <svg class="w-4 h-4 text-emerald-400 dark:text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+    </svg>
+    <span id="toast-text">이메일 주소가 클립보드에 복사되었습니다!</span>
+  </div>
+
+  <!-- ==========================================================================
+       [6. 푸터 (Footer)]
+       ========================================================================== -->
+  <footer class="w-full border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 py-8 text-xs text-zinc-500 dark:text-zinc-400">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <span id="footer-name" class="font-bold text-zinc-800 dark:text-zinc-200">홍길동</span>
+        <span>·</span>
+        <span>개인 포트폴리오 & Neo4j 지식그래프</span>
+      </div>
+      <div class="flex items-center gap-4 text-[11px]">
+        <span>배포: GitHub Pages 호환 (단일 index.html)</span>
+        <span>·</span>
+        <a href="#home" class="hover:underline">맨 위로 이동 ↑</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==========================================================================
+       [7. 애플리케이션 코어 로직 (JavaScript)]
+       - 해시 라우팅 (#home, #projects, #explore)
+       - 테마 토글 (Dark/Light)
+       - 데이터 렌더링 (프로필, 경력, 역량, 프로젝트, 연락처)
+       - Neo4j CSV 파싱 및 지식그래프 시각화 (Vis-network)
+       ========================================================================== -->
+  <script>
+    (function() {
+      'use strict';
+
+      /* ------------------------------------------------------------------------
+       * 1. 테마 관리 (다크모드 / 라이트모드)
+       * ------------------------------------------------------------------------ */
+      const htmlEl = document.documentElement;
+      const themeToggleBtn = document.getElementById('theme-toggle');
+      const themeIconSun = document.getElementById('theme-icon-sun');
+      const themeIconMoon = document.getElementById('theme-icon-moon');
+
+      function initTheme() {
+        const savedTheme = localStorage.getItem('theme');
+        const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        
+        if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+          htmlEl.classList.add('dark');
+          themeIconSun.classList.remove('hidden');
+          themeIconMoon.classList.add('hidden');
+        } else {
+          htmlEl.classList.remove('dark');
+          themeIconSun.classList.add('hidden');
+          themeIconMoon.classList.remove('hidden');
+        }
+      }
+
+      function toggleTheme() {
+        const isDark = htmlEl.classList.toggle('dark');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        if (isDark) {
+          themeIconSun.classList.remove('hidden');
+          themeIconMoon.classList.add('hidden');
+        } else {
+          themeIconSun.classList.add('hidden');
+          themeIconMoon.classList.remove('hidden');
+        }
+        // 그래프 테마 색상 갱신
+        if (window.graphInstance && window.updateGraphTheme) {
+          window.updateGraphTheme(isDark);
+        }
+      }
+
+      themeToggleBtn.addEventListener('click', toggleTheme);
+      initTheme();
+
+      /* ------------------------------------------------------------------------
+       * 2. 토스트 피드백 알림 헬퍼
+       * ------------------------------------------------------------------------ */
+      let toastTimer = null;
+      function showToast(message) {
+        const toast = document.getElementById('toast-message');
+        const toastText = document.getElementById('toast-text');
+        toastText.textContent = message;
+        toast.classList.remove('opacity-0', 'pointer-events-none');
+        toast.classList.add('opacity-100');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          toast.classList.remove('opacity-100');
+          toast.classList.add('opacity-0', 'pointer-events-none');
+        }, 2500);
+      }
+
+      /* ------------------------------------------------------------------------
+       * 3. 해시 라우팅 (#home, #projects, #explore)
+       * ------------------------------------------------------------------------ */
+      const routes = {
+        home: document.getElementById('view-home'),
+        projects: document.getElementById('view-projects'),
+        explore: document.getElementById('view-explore')
+      };
+
+      const navLinks = {
+        home: document.getElementById('nav-home'),
+        projects: document.getElementById('nav-projects'),
+        explore: document.getElementById('nav-explore')
+      };
+
+      function updateActiveNav(activeKey) {
+        Object.keys(navLinks).forEach(key => {
+          const link = navLinks[key];
+          if (!link) return;
+          if (key === activeKey) {
+            link.classList.add('text-zinc-900', 'dark:text-white', 'bg-zinc-100', 'dark:bg-zinc-900', 'font-semibold');
+            link.classList.remove('text-zinc-600', 'dark:text-zinc-400');
+          } else {
+            link.classList.remove('text-zinc-900', 'dark:text-white', 'bg-zinc-100', 'dark:bg-zinc-900', 'font-semibold');
+            link.classList.add('text-zinc-600', 'dark:text-zinc-400');
+          }
+        });
+      }
+
+      function handleRouting() {
+        const rawHash = window.location.hash.replace('#', '').toLowerCase();
+        let currentRoute = 'home';
+        
+        if (rawHash === 'projects') {
+          currentRoute = 'projects';
+        } else if (rawHash === 'explore') {
+          currentRoute = 'explore';
+        } else if (rawHash === 'contact') {
+          currentRoute = 'home';
+          // 홈으로 전환 후 contact 섹션으로 부드럽게 스크롤
+          setTimeout(() => {
+            const contactEl = document.getElementById('contact');
+            if (contactEl) contactEl.scrollIntoView({ behavior: 'smooth' });
+          }, 100);
+        }
+
+        // 뷰 가시성 전환
+        Object.keys(routes).forEach(key => {
+          if (key === currentRoute) {
+            routes[key].classList.remove('hidden');
+          } else {
+            routes[key].classList.add('hidden');
+          }
+        });
+
+        updateActiveNav(currentRoute);
+
+        // 탐색 뷰 진입 시 그래프 렌더링 초기화 또는 리사이즈
+        if (currentRoute === 'explore' && window.initGraphVisualization) {
+          setTimeout(() => {
+            window.initGraphVisualization();
+          }, 50);
+        }
+
+        // 모바일 메뉴 닫기
+        document.getElementById('mobile-menu').classList.add('hidden');
+      }
+
+      window.addEventListener('hashchange', handleRouting);
+      window.addEventListener('load', handleRouting);
+
+      // 모바일 메뉴 토글
+      const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+      mobileMenuBtn.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+      });
+      document.querySelectorAll('.mobile-nav-link').forEach(link => {
+        link.addEventListener('click', () => {
+          mobileMenu.classList.add('hidden');
+        });
+      });
+
+      /* ------------------------------------------------------------------------
+       * 4. 자기소개 섹션 (#home) 데이터 렌더링
+       * ------------------------------------------------------------------------ */
+      function renderProfile() {
+        // 이름 & 브랜드
+        document.getElementById('header-brand-name').textContent = PROFILE.name.split(' ')[0] || PROFILE.name;
+        document.getElementById('footer-name').textContent = PROFILE.name;
+        document.getElementById('hero-name').textContent = PROFILE.name;
+        document.getElementById('hero-role').textContent = PROFILE.roleTitle;
+        document.getElementById('hero-headline').textContent = PROFILE.headline;
+        document.getElementById('hero-status-tag').textContent = PROFILE.statusTag || "구직 중 / 협업 가능";
+        document.getElementById('profile-location').textContent = PROFILE.location || "대한민국";
+
+        // 소개 문단
+        const bioContainer = document.getElementById('hero-bio-container');
+        bioContainer.innerHTML = '';
+        if (PROFILE.bioParagraphs && PROFILE.bioParagraphs.length > 0) {
+          PROFILE.bioParagraphs.forEach(pText => {
+            const p = document.createElement('p');
+            p.textContent = pText;
+            bioContainer.appendChild(p);
+          });
+        }
+
+        // 프로필 사진 컨테이너 (아바타가 없을 때도 멋진 플레이스홀더 제공)
+        const imgContainer = document.getElementById('profile-image-container');
+        imgContainer.innerHTML = '';
+        if (PROFILE.avatarUrl && PROFILE.avatarUrl.trim() !== '') {
+          const img = document.createElement('img');
+          img.src = PROFILE.avatarUrl;
+          img.alt = `${PROFILE.name} 프로필 사진`;
+          img.className = 'w-full h-full object-cover';
+          img.referrerPolicy = 'no-referrer';
+          img.onerror = function() {
+            // 이미지 로드 실패 시 이니셜 아바타로 안전 폴백
+            renderInitialAvatar(imgContainer, PROFILE.name);
+          };
+          imgContainer.appendChild(img);
+        } else {
+          renderInitialAvatar(imgContainer, PROFILE.name);
+        }
+
+        // 핵심 역량 (Skills) 카드 렌더링
+        const skillsGrid = document.getElementById('skills-grid');
+        skillsGrid.innerHTML = '';
+        if (PROFILE.skills) {
+          PROFILE.skills.forEach(skillGroup => {
+            const card = document.createElement('div');
+            card.className = 'p-5 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm space-y-3';
+            
+            const catTitle = document.createElement('h3');
+            catTitle.className = 'text-sm font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2';
+            catTitle.innerHTML = `<span class="w-2 h-2 rounded-full bg-blue-500"></span>${skillGroup.category}`;
+            
+            const list = document.createElement('div');
+            list.className = 'flex flex-wrap gap-1.5';
+            skillGroup.items.forEach(item => {
+              const tag = document.createElement('span');
+              tag.className = 'px-2.5 py-1 text-xs rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700 font-medium';
+              tag.textContent = item;
+              list.appendChild(tag);
+            });
+
+            card.appendChild(catTitle);
+            card.appendChild(list);
+            skillsGrid.appendChild(card);
+          });
+        }
+
+        // 경력 타임라인 렌더링
+        const expContainer = document.getElementById('experience-list');
+        expContainer.innerHTML = '';
+        if (PROFILE.experience) {
+          PROFILE.experience.forEach(exp => {
+            const item = document.createElement('div');
+            item.className = 'p-6 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm space-y-3 transition-hover hover:border-zinc-300 dark:hover:border-zinc-700';
+
+            const headerRow = document.createElement('div');
+            headerRow.className = 'flex flex-col sm:flex-row sm:items-center justify-between gap-1';
+            
+            const titleBlock = document.createElement('div');
+            titleBlock.innerHTML = `
+              <h3 class="text-base font-bold text-zinc-900 dark:text-zinc-100">${exp.title}</h3>
+              <p class="text-xs font-medium text-blue-600 dark:text-blue-400">${exp.organization}</p>
+            `;
+            
+            const periodBadge = document.createElement('span');
+            periodBadge.className = 'text-xs font-mono text-zinc-500 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded self-start sm:self-auto';
+            periodBadge.textContent = exp.period;
+
+            headerRow.appendChild(titleBlock);
+            headerRow.appendChild(periodBadge);
+            item.appendChild(headerRow);
+
+            if (exp.description) {
+              const desc = document.createElement('p');
+              desc.className = 'text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed';
+              desc.textContent = exp.description;
+              item.appendChild(desc);
+            }
+
+            if (exp.highlights && exp.highlights.length > 0) {
+              const ul = document.createElement('ul');
+              ul.className = 'space-y-1 list-disc list-inside text-xs text-zinc-500 dark:text-zinc-400 pl-1';
+              exp.highlights.forEach(h => {
+                const li = document.createElement('li');
+                li.textContent = h;
+                ul.appendChild(li);
+              });
+              item.appendChild(ul);
+            }
+
+            expContainer.appendChild(item);
+          });
+        }
+
+        // 학력 렌더링
+        const eduContainer = document.getElementById('education-list');
+        eduContainer.innerHTML = '';
+        if (PROFILE.education) {
+          PROFILE.education.forEach(edu => {
+            const card = document.createElement('div');
+            card.className = 'p-5 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-2';
+            card.innerHTML = `
+              <div>
+                <h3 class="text-sm font-bold text-zinc-900 dark:text-zinc-100">${edu.degree}</h3>
+                <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">${edu.institution} ${edu.details ? `· ${edu.details}` : ''}</p>
+              </div>
+              <span class="text-xs font-mono text-zinc-400 dark:text-zinc-500">${edu.period}</span>
+            `;
+            eduContainer.appendChild(card);
+          });
+        }
+
+        // 연락처 렌더링
+        const contactsContainer = document.getElementById('contacts-container');
+        contactsContainer.innerHTML = '';
+        if (CONTACTS) {
+          CONTACTS.forEach(contact => {
+            const card = document.createElement('div');
+            card.className = 'p-4 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm flex items-center justify-between gap-3 group';
+
+            const left = document.createElement('div');
+            left.className = 'min-w-0';
+            left.innerHTML = `
+              <p class="text-[11px] font-medium text-zinc-400 dark:text-zinc-500 uppercase">${contact.label}</p>
+              <p class="text-xs sm:text-sm font-semibold text-zinc-900 dark:text-zinc-100 truncate mt-0.5">${contact.value}</p>
+            `;
+            card.appendChild(left);
+
+            const right = document.createElement('div');
+            right.className = 'shrink-0 flex items-center gap-1.5';
+
+            if (contact.copyable) {
+              const copyBtn = document.createElement('button');
+              copyBtn.className = 'p-2 rounded-lg text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors';
+              copyBtn.title = '복사하기';
+              copyBtn.innerHTML = `
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                </svg>
+              `;
+              copyBtn.addEventListener('click', () => {
+                navigator.clipboard.writeText(contact.value).then(() => {
+                  showToast(`${contact.label} 주소가 복사되었습니다!`);
+                }).catch(() => {
+                  showToast('복사에 실패했습니다. 수동으로 복사해주세요.');
+                });
+              });
+              right.appendChild(copyBtn);
+            }
+
+            if (contact.href) {
+              const linkBtn = document.createElement('a');
+              linkBtn.href = contact.href;
+              linkBtn.target = contact.href.startsWith('http') ? '_blank' : '_self';
+              linkBtn.rel = 'noopener noreferrer';
+              linkBtn.className = 'p-2 rounded-lg text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-zinc-800 transition-colors';
+              linkBtn.title = '열기';
+              linkBtn.innerHTML = `
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              `;
+              right.appendChild(linkBtn);
+            }
+
+            card.appendChild(right);
+            contactsContainer.appendChild(card);
+          });
+        }
+      }
+
+      // 프로필 사진이 없을 때 영문 이니셜 SVG 아바타 생성
+      function renderInitialAvatar(container, name) {
+        const initials = name.slice(0, 2).toUpperCase() || 'KG';
+        container.innerHTML = `
+          <div class="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-zinc-800 to-zinc-950 text-white select-none">
+            <svg class="w-16 h-16 opacity-30 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+            <span class="text-3xl font-extrabold tracking-wider font-mono text-blue-400">${initials}</span>
+            <span class="text-[11px] text-zinc-400 mt-1 font-medium">프로필 사진 추가 가능</span>
+          </div>
+        `;
+      }
+
+      /* ------------------------------------------------------------------------
+       * 5. 프로젝트 섹션 (#projects) & 상세 모달
+       * ------------------------------------------------------------------------ */
+      let activeProjectCategory = 'ALL';
+
+      function renderProjects() {
+        const filterContainer = document.getElementById('project-filters');
+        filterContainer.innerHTML = '';
+
+        // 카테고리 목록 추출
+        const categories = ['ALL', ...new Set(PROJECTS.map(p => p.category).filter(Boolean))];
+        
+        categories.forEach(cat => {
+          const btn = document.createElement('button');
+          btn.className = `px-3 py-1.5 rounded-md transition-all ${
+            activeProjectCategory === cat
+              ? 'bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white shadow-sm font-semibold'
+              : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
+          }`;
+          btn.textContent = cat === 'ALL' ? '전체 보기' : cat;
+          btn.addEventListener('click', () => {
+            activeProjectCategory = cat;
+            renderProjects();
+          });
+          filterContainer.appendChild(btn);
+        });
+
+        // 카드 필터링 및 렌더링
+        const cardsContainer = document.getElementById('project-cards-container');
+        cardsContainer.innerHTML = '';
+
+        const filtered = activeProjectCategory === 'ALL'
+          ? PROJECTS
+          : PROJECTS.filter(p => p.category === activeProjectCategory);
+
+        if (filtered.length === 0) {
+          cardsContainer.innerHTML = `
+            <div class="col-span-full py-16 text-center text-zinc-400 text-sm">
+              해당 카테고리에 등록된 프로젝트가 없습니다.
+            </div>
+          `;
+          return;
+        }
+
+        filtered.forEach(proj => {
+          const card = document.createElement('div');
+          card.className = 'group flex flex-col justify-between p-6 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm hover:shadow-md hover:border-zinc-300 dark:hover:border-zinc-700 transition-all cursor-pointer';
+          
+          // 상단 메타데이터
+          const top = document.createElement('div');
+          top.className = 'space-y-3';
+
+          const badgeRow = document.createElement('div');
+          badgeRow.className = 'flex items-center justify-between text-xs';
+          badgeRow.innerHTML = `
+            <span class="text-blue-600 dark:text-blue-400 font-semibold">${proj.category}</span>
+            <span class="text-zinc-400 font-mono text-[11px]">${proj.period}</span>
+          `;
+          top.appendChild(badgeRow);
+
+          const title = document.createElement('h3');
+          title.className = 'text-lg font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors';
+          title.textContent = proj.title;
+          top.appendChild(title);
+
+          const summary = document.createElement('p');
+          summary.className = 'text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed line-clamp-3';
+          summary.textContent = proj.summary;
+          top.appendChild(summary);
+
+          card.appendChild(top);
+
+          // 하단 기술 태그 & 자세히 보기 버튼
+          const bottom = document.createElement('div');
+          bottom.className = 'pt-5 mt-4 border-t border-zinc-100 dark:border-zinc-800/80 space-y-4';
+
+          const techStack = document.createElement('div');
+          techStack.className = 'flex flex-wrap gap-1';
+          if (proj.technologies) {
+            proj.technologies.slice(0, 4).forEach(t => {
+              const tag = document.createElement('span');
+              tag.className = 'px-2 py-0.5 text-[11px] rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 font-mono';
+              tag.textContent = t;
+              techStack.appendChild(tag);
+            });
+            if (proj.technologies.length > 4) {
+              const more = document.createElement('span');
+              more.className = 'px-1.5 py-0.5 text-[10px] text-zinc-400 font-mono';
+              more.textContent = `+${proj.technologies.length - 4}`;
+              techStack.appendChild(more);
+            }
+          }
+          bottom.appendChild(techStack);
+
+          const btn = document.createElement('button');
+          btn.className = 'w-full py-2 text-xs font-semibold text-center text-zinc-800 dark:text-zinc-200 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 rounded-lg transition-colors flex items-center justify-center gap-1.5';
+          btn.innerHTML = `
+            <span>프로젝트 상세 보기</span>
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          `;
+          bottom.appendChild(btn);
+
+          card.appendChild(bottom);
+
+          // 클릭 시 모달 열기
+          card.addEventListener('click', () => {
+            openProjectModal(proj);
+          });
+
+          cardsContainer.appendChild(card);
+        });
+      }
+
+      // 모달 열기 / 닫기
+      const modal = document.getElementById('project-modal');
+      const modalCloseBtn = document.getElementById('modal-close-btn');
+      const modalFooterCloseBtn = document.getElementById('modal-footer-close-btn');
+
+      function openProjectModal(proj) {
+        document.getElementById('modal-category').textContent = proj.category;
+        document.getElementById('modal-title').textContent = proj.title;
+        document.getElementById('modal-period').textContent = proj.period;
+        document.getElementById('modal-role').textContent = proj.role;
+        document.getElementById('modal-summary').textContent = proj.summary;
+        document.getElementById('modal-background').textContent = proj.background || "상세 배경 추가 예정";
+
+        // 진행 과정
+        const processList = document.getElementById('modal-process-list');
+        processList.innerHTML = '';
+        if (proj.process && proj.process.length > 0) {
+          proj.process.forEach(step => {
+            const li = document.createElement('li');
+            li.textContent = step;
+            processList.appendChild(li);
+          });
+        }
+
+        // 결과
+        const resultsList = document.getElementById('modal-results-list');
+        resultsList.innerHTML = '';
+        if (proj.results && proj.results.length > 0) {
+          proj.results.forEach(res => {
+            const li = document.createElement('li');
+            li.textContent = res;
+            resultsList.appendChild(li);
+          });
+        }
+
+        // 기술 스택
+        const techContainer = document.getElementById('modal-tech-stack');
+        techContainer.innerHTML = '';
+        if (proj.technologies) {
+          proj.technologies.forEach(tech => {
+            const span = document.createElement('span');
+            span.className = 'px-2.5 py-1 text-xs rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 font-mono font-medium border border-zinc-200 dark:border-zinc-700';
+            span.textContent = tech;
+            techContainer.appendChild(span);
+          });
+        }
+
+        // 링크 버튼
+        const linksContainer = document.getElementById('modal-links');
+        linksContainer.innerHTML = '';
+        if (proj.links && proj.links.length > 0) {
+          proj.links.forEach(l => {
+            const a = document.createElement('a');
+            a.href = l.url;
+            a.className = 'px-3.5 py-2 text-xs font-semibold rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors flex items-center gap-1.5 shadow-sm';
+            a.innerHTML = `
+              <span>${l.label}</span>
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+            `;
+            if (l.url.startsWith('#')) {
+              a.addEventListener('click', () => {
+                closeProjectModal();
+              });
+            } else {
+              a.target = '_blank';
+              a.rel = 'noopener noreferrer';
+            }
+            linksContainer.appendChild(a);
+          });
+        }
+
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeProjectModal() {
+        modal.classList.add('hidden');
+        document.body.style.overflow = '';
+      }
+
+      modalCloseBtn.addEventListener('click', closeProjectModal);
+      modalFooterCloseBtn.addEventListener('click', closeProjectModal);
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          closeProjectModal();
+        }
+      });
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+          closeProjectModal();
+        }
+      });
+
+      /* ------------------------------------------------------------------------
+       * 6. Neo4j CSV 파싱 & 인터랙티브 지식그래프 탐색기
+       * ------------------------------------------------------------------------ */
+      let rawCsvRows = [];
+      let graphNodes = [];
+      let graphEdges = [];
+      let visNetwork = null;
+      let nodeTypes = [];
+      let edgeTypes = [];
+      let isPhysicsEnabled = true;
+
+      // 노드 타입별 세련된 배색 팔레트 (Dark / Light 모드 호환)
+      const NODE_COLOR_PALETTE = {
+        Portfolio: { bg: '#3b82f6', border: '#1d4ed8', text: '#ffffff' },  // 블루
+        Project: { bg: '#8b5cf6', border: '#6d28d9', text: '#ffffff' },    // 퍼플
+        Technology: { bg: '#10b981', border: '#047857', text: '#ffffff' }, // 에메랄드
+        Domain: { bg: '#f59e0b', border: '#d97706', text: '#ffffff' },     // 앰버
+        Skill: { bg: '#ec4899', border: '#be185d', text: '#ffffff' },      // 핑크
+        Person: { bg: '#06b6d4', border: '#0e7490', text: '#ffffff' },     // 시안
+        Default: { bg: '#64748b', border: '#475569', text: '#ffffff' }     // 슬레이트
+      };
+
+      function parseNeo4jCsv() {
+        const csvScript = document.getElementById('neo4j-csv');
+        if (!csvScript) return;
+
+        const text = csvScript.textContent.trim();
+        const lines = text.split(/\r?\n/).filter(line => line.trim() !== '');
+        if (lines.length < 2) return;
+
+        const headers = lines[0].split(',').map(h => h.trim());
+        rawCsvRows = [];
+
+        // 컬럼 위치 파악 (유연한 헤더 매핑)
+        const getIdx = (candidates) => {
+          for (let c of candidates) {
+            const idx = headers.findIndex(h => h.toLowerCase() === c.toLowerCase());
+            if (idx !== -1) return idx;
+          }
+          return -1;
+        };
+
+        const sIdIdx = getIdx(['source_id', 'start_id', ':start_id', 'source', 'from']);
+        const sNameIdx = getIdx(['source_name', 'start_name', 'source_label', 'source']);
+        const sTypeIdx = getIdx(['source_type', 'start_type', ':label', 'source_category']);
+        const tIdIdx = getIdx(['target_id', 'end_id', ':end_id', 'target', 'to']);
+        const tNameIdx = getIdx(['target_name', 'end_name', 'target_label', 'target']);
+        const tTypeIdx = getIdx(['target_type', 'end_type', 'target_category']);
+        const relIdx = getIdx(['relation', 'type', ':type', 'relationship', 'label']);
+        const descIdx = getIdx(['relation_desc', 'description', 'desc', 'properties']);
+        const weightIdx = getIdx(['weight', 'value']);
+
+        const nodeMap = new Map();
+        const edgeList = [];
+
+        for (let i = 1; i < lines.length; i++) {
+          const parts = parseCsvLine(lines[i]);
+          if (parts.length < 3) continue;
+
+          const sId = (parts[sIdIdx] || `N_${i}_A`).trim();
+          const sName = (sNameIdx !== -1 ? parts[sNameIdx] : sId).trim();
+          const sType = (sTypeIdx !== -1 ? parts[sTypeIdx] : 'Entity').trim();
+
+          const tId = (parts[tIdIdx] || `N_${i}_B`).trim();
+          const tName = (tNameIdx !== -1 ? parts[tNameIdx] : tId).trim();
+          const tType = (tTypeIdx !== -1 ? parts[tTypeIdx] : 'Entity').trim();
+
+          const rel = (relIdx !== -1 ? parts[relIdx] : 'RELATED_TO').trim();
+          const desc = (descIdx !== -1 ? parts[descIdx] : '').trim();
+          const weight = weightIdx !== -1 ? parseFloat(parts[weightIdx]) || 1.5 : 1.5;
+
+          // 노드 등록
+          if (!nodeMap.has(sId)) {
+            nodeMap.set(sId, { id: sId, label: sName, type: sType });
+          }
+          if (!nodeMap.has(tId)) {
+            nodeMap.set(tId, { id: tId, label: tName, type: tType });
+          }
+
+          // 엣지 등록
+          const edgeId = `e_${sId}_${tId}_${i}`;
+          edgeList.push({
+            id: edgeId,
+            from: sId,
+            to: tId,
+            label: rel,
+            desc: desc,
+            weight: weight,
+            sourceName: sName,
+            targetName: tName,
+            sourceType: sType,
+            targetType: tType
+          });
+
+          rawCsvRows.push({
+            sourceId: sId,
+            sourceName: sName,
+            sourceType: sType,
+            targetId: tId,
+            targetName: tName,
+            targetType: tType,
+            relation: rel,
+            desc: desc,
+            weight: weight
+          });
+        }
+
+        graphNodes = Array.from(nodeMap.values());
+        graphEdges = edgeList;
+
+        nodeTypes = [...new Set(graphNodes.map(n => n.type))];
+        edgeTypes = [...new Set(graphEdges.map(e => e.label))];
+      }
+
+      // 간단한 CSV 라인 분일기 (쉼표 및 따옴표 처리)
+      function parseCsvLine(text) {
+        let p = '', row = [''], i = 0, r = 0, q = false;
+        for (i = 0; i < text.length; i++) {
+          let c = text[i];
+          if (c === '"') {
+            q = !q;
+          } else if (c === ',' && !q) {
+            row.push('');
+            r++;
+          } else {
+            row[r] += c;
+          }
+        }
+        return row;
+      }
+
+      // 툴바 필터 및 범례 옵션 초기화
+      function initGraphControls() {
+        const nodeSelect = document.getElementById('filter-node-type');
+        nodeSelect.innerHTML = '<option value="ALL">전체 노드 유형</option>';
+        nodeTypes.forEach(t => {
+          const opt = document.createElement('option');
+          opt.value = t;
+          opt.textContent = `${t}`;
+          nodeSelect.appendChild(opt);
+        });
+
+        const edgeSelect = document.getElementById('filter-edge-type');
+        edgeSelect.innerHTML = '<option value="ALL">전체 관계 유형</option>';
+        edgeTypes.forEach(t => {
+          const opt = document.createElement('option');
+          opt.value = t;
+          opt.textContent = `${t}`;
+          edgeSelect.appendChild(opt);
+        });
+
+        // 범례 렌더링
+        const legendContainer = document.getElementById('graph-legend-container');
+        // 기존 칩들 제거 (첫 번째 span 라벨 제외)
+        const labelSpan = legendContainer.querySelector('span');
+        legendContainer.innerHTML = '';
+        if (labelSpan) legendContainer.appendChild(labelSpan);
+
+        nodeTypes.forEach(t => {
+          const colors = NODE_COLOR_PALETTE[t] || NODE_COLOR_PALETTE.Default;
+          const chip = document.createElement('div');
+          chip.className = 'inline-flex items-center gap-1.5 cursor-pointer hover:opacity-80 transition-opacity';
+          chip.innerHTML = `
+            <span class="w-2.5 h-2.5 rounded-full" style="background-color: ${colors.bg};"></span>
+            <span>${t}</span>
+          `;
+          chip.addEventListener('click', () => {
+            nodeSelect.value = t;
+            filterAndRenderGraph();
+          });
+          legendContainer.appendChild(chip);
+        });
+      }
+
+      // 그래프 시각화 (Vis-network 기반 + 인터랙티브 이벤트)
+      function renderVisNetwork(filteredNodes, filteredEdges) {
+        const container = document.getElementById('vis-network-container');
+        if (!container) return;
+
+        // 개수 뱃지 갱신
+        document.getElementById('badge-node-count').textContent = `노드: ${filteredNodes.length}`;
+        document.getElementById('badge-edge-count').textContent = `관계: ${filteredEdges.length}`;
+
+        const isDark = document.documentElement.classList.contains('dark');
+
+        // Vis.js용 데이터 포맷 가공
+        const visNodes = filteredNodes.map(n => {
+          const palette = NODE_COLOR_PALETTE[n.type] || NODE_COLOR_PALETTE.Default;
+          return {
+            id: n.id,
+            label: n.label,
+            title: `${n.label} (${n.type})`,
+            shape: 'box',
+            margin: 10,
+            color: {
+              background: palette.bg,
+              border: palette.border,
+              highlight: {
+                background: '#2563eb',
+                border: '#1d4ed8'
+              },
+              hover: {
+                background: palette.border,
+                border: palette.bg
+              }
+            },
+            font: {
+              color: palette.text,
+              size: 13,
+              face: 'Pretendard, system-ui',
+              bold: { color: palette.text }
+            },
+            borderWidth: 2,
+            shadow: {
+              enabled: true,
+              color: isDark ? 'rgba(0,0,0,0.5)' : 'rgba(0,0,0,0.1)',
+              size: 5,
+              x: 2,
+              y: 2
+            }
+          };
+        });
+
+        const visEdges = filteredEdges.map(e => {
+          return {
+            id: e.id,
+            from: e.from,
+            to: e.to,
+            label: e.label,
+            title: e.desc || e.label,
+            arrows: {
+              to: { enabled: true, scaleFactor: 0.7 }
+            },
+            font: {
+              size: 11,
+              align: 'middle',
+              color: isDark ? '#94a3b8' : '#64748b',
+              strokeWidth: 2,
+              strokeColor: isDark ? '#09090b' : '#ffffff',
+              face: 'Pretendard, system-ui'
+            },
+            color: {
+              color: isDark ? '#3f3f46' : '#cbd5e1',
+              highlight: '#3b82f6',
+              hover: '#60a5fa'
+            },
+            width: Math.min(Math.max(e.weight || 1.5, 1), 4),
+            smooth: {
+              type: 'cubicBezier',
+              roundness: 0.2
+            }
+          };
+        });
+
+        const data = {
+          nodes: new vis.DataSet(visNodes),
+          edges: new vis.DataSet(visEdges)
+        };
+
+        const options = {
+          physics: {
+            enabled: isPhysicsEnabled,
+            solver: 'forceAtlas2Based',
+            forceAtlas2Based: {
+              gravitationalConstant: -50,
+              centralGravity: 0.01,
+              springLength: 100,
+              springConstant: 0.08,
+              damping: 0.4
+            },
+            stabilization: {
+              iterations: 150,
+              updateInterval: 25
+            }
+          },
+          interaction: {
+            hover: true,
+            tooltipDelay: 100,
+            hideEdgesOnDrag: false,
+            zoomView: true,
+            dragView: true
+          }
+        };
+
+        if (visNetwork) {
+          visNetwork.destroy();
+        }
+
+        try {
+          visNetwork = new vis.Network(container, data, options);
+          window.graphInstance = visNetwork;
+
+          // 노드 클릭 이벤트 -> 사이드 패널에 상세 속성 및 연결 관계 표시
+          visNetwork.on('click', function(params) {
+            if (params.nodes.length > 0) {
+              const selectedId = params.nodes[0];
+              const selectedNode = filteredNodes.find(n => n.id === selectedId);
+              if (selectedNode) {
+                showNodeDetailPanel(selectedNode, filteredEdges);
+              }
+            } else {
+              hideNodeDetailPanel();
+            }
+          });
+
+        } catch (err) {
+          console.warn('Vis-network 초기화 오류, 자체 캔버스 폴백 가동:', err);
+          renderCanvasFallback(container, filteredNodes, filteredEdges);
+        }
+      }
+
+      // 우측 사이드 패널에 노드 속성 및 연결 릴레이션 출력
+      function showNodeDetailPanel(node, edges) {
+        document.getElementById('detail-empty-state').classList.add('hidden');
+        document.getElementById('detail-content').classList.remove('hidden');
+        document.getElementById('btn-close-detail').classList.remove('hidden');
+
+        document.getElementById('detail-type-badge').textContent = node.type;
+        document.getElementById('detail-node-name').textContent = node.label;
+        document.getElementById('detail-node-id').textContent = `ID: ${node.id}`;
+
+        // 연결된 엣지 검색
+        const connectedEdges = edges.filter(e => e.from === node.id || e.to === node.id);
+        document.getElementById('detail-edge-count').textContent = `${connectedEdges.length}개`;
+
+        const listContainer = document.getElementById('detail-connected-list');
+        listContainer.innerHTML = '';
+
+        if (connectedEdges.length === 0) {
+          listContainer.innerHTML = '<p class="text-zinc-400 py-2">연결된 관계가 없습니다.</p>';
+          return;
+        }
+
+        connectedEdges.forEach(e => {
+          const isOutbound = e.from === node.id;
+          const otherNodeId = isOutbound ? e.to : e.from;
+          const otherNode = graphNodes.find(n => n.id === otherNodeId) || { label: otherNodeId, type: 'Entity' };
+
+          const row = document.createElement('div');
+          row.className = 'p-2 rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-blue-400 dark:hover:border-blue-500 transition-colors cursor-pointer group';
+          row.innerHTML = `
+            <div class="flex items-center justify-between text-[10px] text-zinc-500 mb-0.5">
+              <span class="font-mono ${isOutbound ? 'text-blue-500' : 'text-emerald-500'} font-semibold">
+                ${isOutbound ? '→ OUT' : '← IN'}
+              </span>
+              <span class="font-mono bg-zinc-100 dark:bg-zinc-800 px-1 rounded">${e.label}</span>
+            </div>
+            <div class="font-medium text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 truncate">
+              ${otherNode.label}
+            </div>
+            ${e.desc ? `<p class="text-[10px] text-zinc-400 dark:text-zinc-500 mt-0.5 truncate">${e.desc}</p>` : ''}
+          `;
+
+          // 클릭 시 해당 상대 노드로 포커스 이동
+          row.addEventListener('click', () => {
+            if (visNetwork) {
+              visNetwork.selectNodes([otherNodeId]);
+              visNetwork.focus(otherNodeId, { scale: 1.2, animation: { duration: 400 } });
+              showNodeDetailPanel(otherNode, edges);
+            }
+          });
+
+          listContainer.appendChild(row);
+        });
+      }
+
+      function hideNodeDetailPanel() {
+        document.getElementById('detail-empty-state').classList.remove('hidden');
+        document.getElementById('detail-content').classList.add('hidden');
+        document.getElementById('btn-close-detail').classList.add('hidden');
+        if (visNetwork) {
+          visNetwork.unselectAll();
+        }
+      }
+
+      document.getElementById('btn-close-detail').addEventListener('click', hideNodeDetailPanel);
+
+      // 필터링 적용 함수
+      function filterAndRenderGraph() {
+        const searchVal = document.getElementById('graph-search-input').value.trim().toLowerCase();
+        const selectedNodeType = document.getElementById('filter-node-type').value;
+        const selectedEdgeType = document.getElementById('filter-edge-type').value;
+
+        // 노드 필터링
+        let matchedNodes = graphNodes;
+        if (selectedNodeType !== 'ALL') {
+          matchedNodes = matchedNodes.filter(n => n.type === selectedNodeType);
+        }
+        if (searchVal !== '') {
+          matchedNodes = matchedNodes.filter(n => 
+            n.label.toLowerCase().includes(searchVal) ||
+            n.id.toLowerCase().includes(searchVal) ||
+            n.type.toLowerCase().includes(searchVal)
+          );
+        }
+
+        const validNodeIds = new Set(matchedNodes.map(n => n.id));
+
+        // 엣지 필터링 (양쪽 노드가 존재하는 엣지만 포함)
+        let matchedEdges = graphEdges.filter(e => validNodeIds.has(e.from) && validNodeIds.has(e.to));
+        if (selectedEdgeType !== 'ALL') {
+          matchedEdges = matchedEdges.filter(e => e.label === selectedEdgeType);
+        }
+
+        renderVisNetwork(matchedNodes, matchedEdges);
+        renderTableRows(matchedEdges);
+      }
+
+      // 데이터 표(Table) 렌더링
+      function renderTableRows(edgesToDisplay) {
+        const tbody = document.getElementById('csv-table-body');
+        document.getElementById('table-row-count').textContent = edgesToDisplay.length;
+        tbody.innerHTML = '';
+
+        if (edgesToDisplay.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="7" class="py-8 text-center text-zinc-400 text-xs">
+                조건에 맞는 데이터가 없습니다.
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        edgesToDisplay.forEach(e => {
+          const tr = document.createElement('tr');
+          tr.className = 'hover:bg-zinc-50 dark:hover:bg-zinc-950/50 transition-colors';
+          tr.innerHTML = `
+            <td class="py-3 px-4 font-medium text-zinc-900 dark:text-zinc-100">${e.sourceName}</td>
+            <td class="py-3 px-3">
+              <span class="px-1.5 py-0.5 rounded text-[10px] font-mono bg-blue-50 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300">
+                ${e.sourceType}
+              </span>
+            </td>
+            <td class="py-3 px-4 font-mono font-semibold text-blue-600 dark:text-blue-400">${e.label}</td>
+            <td class="py-3 px-4 font-medium text-zinc-900 dark:text-zinc-100">${e.targetName}</td>
+            <td class="py-3 px-3">
+              <span class="px-1.5 py-0.5 rounded text-[10px] font-mono bg-purple-50 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300">
+                ${e.targetType}
+              </span>
+            </td>
+            <td class="py-3 px-4 text-zinc-500 dark:text-zinc-400 text-[11px]">${e.desc || '-'}</td>
+            <td class="py-3 px-3 text-right font-mono text-zinc-400">${e.weight || 1}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      // 검색창 인터랙션
+      const searchInput = document.getElementById('graph-search-input');
+      const searchClearBtn = document.getElementById('graph-search-clear');
+      
+      searchInput.addEventListener('input', () => {
+        if (searchInput.value.length > 0) {
+          searchClearBtn.classList.remove('hidden');
+        } else {
+          searchClearBtn.classList.add('hidden');
+        }
+        filterAndRenderGraph();
+      });
+
+      searchClearBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        searchClearBtn.classList.add('hidden');
+        filterAndRenderGraph();
+      });
+
+      document.getElementById('filter-node-type').addEventListener('change', filterAndRenderGraph);
+      document.getElementById('filter-edge-type').addEventListener('change', filterAndRenderGraph);
+
+      // 그래프 컨트롤 버튼들
+      document.getElementById('btn-graph-fit').addEventListener('click', () => {
+        if (visNetwork) {
+          visNetwork.fit({ animation: { duration: 500, easingFunction: 'easeInOutQuad' } });
+        }
+      });
+
+      document.getElementById('btn-graph-physics').addEventListener('click', () => {
+        isPhysicsEnabled = !isPhysicsEnabled;
+        if (visNetwork) {
+          visNetwork.setOptions({ physics: { enabled: isPhysicsEnabled } });
+        }
+        const icon = document.getElementById('icon-physics-active');
+        if (isPhysicsEnabled) {
+          icon.classList.add('text-emerald-500');
+          icon.classList.remove('text-zinc-400');
+          showToast('물리 시뮬레이션이 활성화되었습니다.');
+        } else {
+          icon.classList.remove('text-emerald-500');
+          icon.classList.add('text-zinc-400');
+          showToast('물리 시뮬레이션이 정지(고정)되었습니다.');
+        }
+      });
+
+      document.getElementById('btn-graph-reset').addEventListener('click', () => {
+        searchInput.value = '';
+        searchClearBtn.classList.add('hidden');
+        document.getElementById('filter-node-type').value = 'ALL';
+        document.getElementById('filter-edge-type').value = 'ALL';
+        filterAndRenderGraph();
+        hideNodeDetailPanel();
+        showToast('그래프 필터와 화면이 초기화되었습니다.');
+      });
+
+      // 뷰 토글 (그래프 뷰 <-> 표 뷰)
+      const graphViewWrapper = document.getElementById('graph-view-wrapper');
+      const tableViewWrapper = document.getElementById('table-view-wrapper');
+      const viewToggleGraph = document.getElementById('view-toggle-graph');
+      const viewToggleTable = document.getElementById('view-toggle-table');
+
+      viewToggleGraph.addEventListener('click', () => {
+        graphViewWrapper.classList.remove('hidden');
+        tableViewWrapper.classList.add('hidden');
+        viewToggleGraph.className = 'px-4 py-2 text-xs font-semibold rounded-md bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white shadow-sm transition-all flex items-center gap-1.5';
+        viewToggleTable.className = 'px-4 py-2 text-xs font-semibold rounded-md text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all flex items-center gap-1.5';
+        if (visNetwork) {
+          visNetwork.redraw();
+        }
+      });
+
+      viewToggleTable.addEventListener('click', () => {
+        graphViewWrapper.classList.add('hidden');
+        tableViewWrapper.classList.remove('hidden');
+        viewToggleTable.className = 'px-4 py-2 text-xs font-semibold rounded-md bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white shadow-sm transition-all flex items-center gap-1.5';
+        viewToggleGraph.className = 'px-4 py-2 text-xs font-semibold rounded-md text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all flex items-center gap-1.5';
+      });
+
+      // CSV 다운로드 기능
+      document.getElementById('btn-export-csv').addEventListener('click', () => {
+        const csvContent = document.getElementById('neo4j-csv').textContent.trim();
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.setAttribute('href', url);
+        link.setAttribute('download', 'neo4j_knowledge_graph.csv');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        showToast('CSV 파일이 다운로드되었습니다.');
+      });
+
+      // 초기화 엔트리포인트
+      window.initGraphVisualization = function() {
+        if (graphNodes.length === 0) {
+          parseNeo4jCsv();
+          initGraphControls();
+        }
+        filterAndRenderGraph();
+      };
+
+      // 테마 변경 시 그래프 재렌더링
+      window.updateGraphTheme = function() {
+        if (visNetwork) {
+          filterAndRenderGraph();
+        }
+      };
+
+      /* ------------------------------------------------------------------------
+       * 자체 HTML5 캔버스 폴백 (만약 외부 CDN 네트워크가 차단된 환경일 경우)
+       * ------------------------------------------------------------------------ */
+      function renderCanvasFallback(container, nodes, edges) {
+        container.innerHTML = '';
+        const canvas = document.createElement('canvas');
+        canvas.width = container.clientWidth || 800;
+        canvas.height = container.clientHeight || 600;
+        canvas.className = 'w-full h-full';
+        container.appendChild(canvas);
+
+        const ctx = canvas.getContext('2d');
+        const isDark = document.documentElement.classList.contains('dark');
+
+        // 원형으로 노드 배치
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const radius = Math.min(centerX, centerY) * 0.7;
+
+        const nodePos = {};
+        nodes.forEach((n, idx) => {
+          const angle = (idx / nodes.length) * 2 * Math.PI;
+          nodePos[n.id] = {
+            x: centerX + radius * Math.cos(angle),
+            y: centerY + radius * Math.sin(angle),
+            label: n.label,
+            type: n.type
+          };
+        });
+
+        // 엣지 그리기
+        ctx.strokeStyle = isDark ? '#3f3f46' : '#cbd5e1';
+        ctx.lineWidth = 1.5;
+        edges.forEach(e => {
+          const p1 = nodePos[e.from];
+          const p2 = nodePos[e.to];
+          if (p1 && p2) {
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.stroke();
+          }
+        });
+
+        // 노드 그리기
+        nodes.forEach(n => {
+          const p = nodePos[n.id];
+          if (!p) return;
+          const palette = NODE_COLOR_PALETTE[n.type] || NODE_COLOR_PALETTE.Default;
+          ctx.fillStyle = palette.bg;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 18, 0, 2 * Math.PI);
+          ctx.fill();
+
+          ctx.fillStyle = isDark ? '#ffffff' : '#09090b';
+          ctx.font = '12px Pretendard, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(p.label, p.x, p.y + 30);
+        });
+      }
+
+      /* ------------------------------------------------------------------------
+       * 애플리케이션 시작
+       * ------------------------------------------------------------------------ */
+      renderProfile();
+      renderProjects();
+      parseNeo4jCsv();
+
+    })();
+  </script>
+
+</body>
+</html>
